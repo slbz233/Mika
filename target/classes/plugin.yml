@@ -1,0 +1,126 @@
+name: Mika
+version: '0.7.21'
+main: bluearchive.mika.Mika
+api-version: 1.13
+authors: [ slbz233,boyhim ]
+load: STARTUP
+description: An advanced and modern anticheat solution for your Minecraft server
+website: https://github.com/slbz233/mika
+depend: [ProtocolLib]
+commands:
+  admin:
+    description: Mika admin command
+#    usage: /<command> help
+
+  mika:
+    description: Mika base command
+#    usage: /<command> help
+    aliases:
+      - mac
+
+#  mikaadmin:
+#    description: Mika GUI command
+#    usage: /<command>
+#    aliases:
+#      - macadmin
+#      - admingui
+
+  hina:
+    description: Report base command
+    usage: /<command> <player> <reason>
+    aliases:
+      - amauako
+      - shiroko
+      - tsurugi
+      - lori
+
+#  aac:
+#    description: AAC base command
+#    usage: /<command> help
+permissions:
+#  admin.*:
+#    description: All access of Mika's admin command's permissions
+#    children:
+#      admin.ban: true
+#      admin.kick: true
+#      admin.teleport: true
+#      admin.view: true
+#    admin.ban:
+#      description: Ban players from server
+#      default: op
+#    admin.kick:
+#      description: Kick players from server
+#      default: op
+#    admin.teleport:
+#      description: Teleport to report players
+#      default: op
+#    admin.view:
+#      description: View all reports
+#      default: op
+
+  mika.*:
+    description: All access of Mika's permissions
+    children:
+      mika.alert: true
+      mika.alerts: true
+      mika.bypass: true
+      mika.check: true
+      mika.debug: true
+      mika.gui: true
+      mika.message: true
+      mika.notify: true
+      mika.reload: true
+      mika.reset: true
+      mika.status: true
+      mika.spectate: true
+      mika.sudo: true
+      mika.verbose: true
+  mika.alert:
+    description: Turn on/off Mika's alert messages
+    default: op
+  mika.alerts:
+    description: Receive alerts from Mika's checks
+    default: op
+  mika.bypass:
+    description: Bypass all of Mika's checks
+    default: op
+  mika.check:
+    description: Force Mika to analyse a particular player
+    default: op
+  mika.debug:
+    description: Turn on/off Mika's debug messages for op
+    default: op
+  mika.gui:
+    description: View Mika's GUI
+    default: op
+  mika.message:
+    description: Send messages for player
+    default: op
+  mika.notify:
+    description: Send and receive Mika notifications
+    default: op
+  mika.reload:
+    description: Reload Mika's checks(Flag/VL) and configuration file
+    default: op
+  mika.reset:
+    description: Clear all information/vl and flag about a player from Mika's database
+    default: op
+  mika.status:
+    description: View information about online players
+    default: op
+  mika.spectate:
+    description: Teleport to players in spectator mode
+    default: op
+  mika.sudo:
+    description: Run commands as another player
+    default: op
+  mika.verbose:
+    description: Turn on/off Mika's verbose messages
+    default: op
+
+#  hina.*:
+#    description: All access of Mika's report command'sd permissions
+#    children:
+#      hina.report: true
+#  hina.report:
+#    description: Report hackers
