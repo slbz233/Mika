@@ -1,0 +1,8 @@
+name: Mika
+version: '${project.version}'
+main: bluearchive.mika.Mika
+api-version: 1.13
+load: STARTUP
+authors: [slbz233, Malon]
+description: An advanced and modern anticheat solution for your Minecraft server
+website: https://github.com/slbz233/Mika

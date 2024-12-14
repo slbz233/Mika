@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>bluearchive</groupId>
+  <artifactId>Mika</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Mika</name>
+
+    <description>An advanced and modern anticheat solution for your Minecraft server</description>
+    <properties>
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+    <url>https://github.com/slbz233/Mika</url>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>Mika</finalName>
+                            <minimizeJar>false</minimizeJar>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.comphenix.executors</pattern>
+                                    <shadedPattern>bluearchive.mika.internal
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.comphenix.protocol</pattern>
+                                    <shadedPattern>bluearchive.mika.internal
+                                    </shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>net.sf.cglib</pattern>
+                                    <shadedPattern>bluearchive.mika.internal
+                                    </shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>2.6.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <injar>Mika.jar</injar>
+                    <attach>false</attach>
+                    <attachArtifactClassifier>pg</attachArtifactClassifier>
+                    <!-- attach 的作用是在 install 与 deploy 时将生成的 pg 文件也安装与部署 -->
+                    <options> <!-- 详细配置方式参考 ProGuard 官方文档 -->
+                        <option>-dontobfuscate</option>
+                        <option>-ignorewarnings</option>
+                        <option>-dontwarn</option>
+                        <!--忽略所有警告-->
+                        <option>-dontshrink</option><!--不做 shrink -->
+                        <option>-dontoptimize</option> <!--不做 optimize -->
+                        <option>-dontskipnonpubliclibraryclasses</option>
+                        <option>-dontskipnonpubliclibraryclassmembers</option>
+                        <!--平行包结构（重构包层次），所有混淆的类放在哪个包下-->
+                        <option>-repackageclasses bluearchive.mika.internal</option>
+                        <!-- 以下为 Keep，哪些内容保持不变，因为有一些内容混淆后（a,b,c）导致反射或按类名字符串相关的操作失效 -->
+                        <option>-keep class bluearchive.mika.Mika</option>
+                        <option>-keep class **.module-info</option>
+                        <option>-keep class **.package-info</option>
+                        <!--保持包注解类-->
+                        <option>-keepattributes Signature</option>
+                        <!--JAXB NEED，具体原因不明，不加会导致 JAXB 出异常，如果不使用 JAXB 根据需要修改-->
+                        <!-- Jaxb requires generics to be available to perform xml parsing and without this option ProGuard was not retaining that information after obfuscation. That was causing the exception above. -->
+                        <option>-keepattributes SourceFile,LineNumberTable,*Annotation*</option>
+                        <!--保持源码名与行号（异常时有明确的栈信息），注解（默认会过滤掉所有注解，会影响框架的注解）-->
+                        <!--                    <option>-keepclassmembers enum org.noahx.proguard.example.project2.** { *;}</option>-->
+                        <!--                    保持枚举中的名子，确保枚举 valueOf 可以使用-->
+                        <!--                    <option>-keep class org.noahx.proguard.example.project2.bean.** { *;}</option>-->
+                        <!--                    &lt;!&ndash;保持 Bean 类，（由于很多框架会对 Bean 中的内容做反射处理，请根据自己的业务调整） &ndash;&gt;-->
+                        <!--                    <option>-keep class org.noahx.proguard.example.project2.Project2 { public void init(); public void destroy(); }</option>-->
+                        <!--                    &lt;!&ndash; 保持对外的接口性质类对外的类名与方法名不变 &ndash;&gt;-->
+                    </options>
+                    <!--                <outjar>${project.build.finalName}-ProGuard</outjar>-->
+                    <outjar>Mika-ProGuard</outjar>
+                    <libs>
+                        <lib>${java.home}/lib/rt.jar</lib>
+                    </libs>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil-extra</artifactId>
+            <version>8.5.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib-API</artifactId>
+            <version>4.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+</project>
